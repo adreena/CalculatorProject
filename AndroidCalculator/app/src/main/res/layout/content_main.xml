@@ -15,19 +15,50 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=""
-        android:id="@+id/txtViewstatus"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:textSize="30dp" />
+        android:text="..."
+        android:id="@+id/txtViewStatus"
+        android:textSize="15dp"
+        android:layout_alignTop="@+id/buttonConnect"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Connect"
         android:id="@+id/buttonConnect"
-        android:layout_marginTop="62dp"
-        android:textSize="25dp"
-        android:layout_below="@+id/txtViewstatus"
-        android:layout_centerHorizontal="true" />
+        android:textSize="15dp"
+        android:layout_below="@+id/txtViewResult"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="135dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editTextEquation"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignRight="@+id/buttonConnect"
+        android:layout_alignEnd="@+id/buttonConnect" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Result"
+        android:id="@+id/txtViewResult"
+        android:textSize="15dp"
+        android:layout_marginTop="127dp"
+        android:layout_below="@+id/editTextEquation"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Equalte"
+        android:id="@+id/buttonEqulate"
+        android:layout_alignBottom="@+id/txtViewResult"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="45dp" />
 </RelativeLayout>
