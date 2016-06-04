@@ -2,6 +2,7 @@ var express = require('express');
 var port = 3000;
 var engines = require('consolidate');
 var bodyParser = require('body-parser');
+var equlator = require('./controllers/equlator.js');
 
 
 //express middleware
@@ -28,22 +29,23 @@ var router = express.Router();
 
 router.route('/equlator')
 	  .get(function(req,res){
-	  	res.render('index'); 
-
+	  	res.render('main'); 
 	  })
-	 .post(function(req,res,next){
-	 	//req.checkBody('equation','equation field is required').notEmpty();
-	  	console.log("got to post");
+	  .post(function(req,res,next){
+
 	  	var equation = req.body.equation;
+
 	  	if(typeof equation == 'undefined'){
-	  		next(Error('Please type yout equation'));
-	  	}else{
-			/*res.render('index',{
-								'result': equation,
-								'length': equation.length}); */
-								res.send({
-								'result': equation,
-								'length': equation.length});
+	  		next(Error('Please type your equation'));
+	  	}
+	  	else{
+	  		//Equalte 
+	  		equlator.process(equation, function(err, result){
+	  			if(err)
+	  				throw err;
+	  			console.log('passed equaltor');
+	  			res.send({'result': result});
+	  		});
 			
 	  	}
 	  });
