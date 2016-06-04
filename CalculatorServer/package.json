@@ -1,0 +1,17 @@
+{
+  "name": "calculator_server",
+  "version": "1.0.0",
+  "description": "calculates and equation",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "kimia",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.1",
+    "express": "^4.13.4",
+    "mongoose": "^4.4.19",
+    "node-restful": "^0.2.5"
+  }
+}
