@@ -1,19 +1,42 @@
 <html>
 	<head>
 		<title> {{name}} </title>
+		<script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
 	</head>
 	<body>
 		<h1> hello, I am Equlator </h1>
-		<form action="/equlator" method="POST">
+		
 			<p> what is you equation? </p>
 			<p>
-				<input type="text" name="equation" placeholder="equation..."> </input>
+				<input type="text" name="equation" 
+					id = "txtEquation"
+						placeholder="equation..."> </input>
 			</p>
-			<input type="submit" value="Equlate"/>
-		</form>
-
-		<p>Result: {{result}} , {{length}} </p>
+			<input type="button" value="Equlate" id="btnEqualate"/>
+		<p id="txtResult"/>
 	</body>
+	<script type="text/javascript">
+		$('#btnEqualate').click(function(){
+			
+			//data to send to server
+			var data = {};
+			data.equation = $('#txtEquation').val();
+			
+			//partial update to the view
+			$.ajax({
+				url: 'http://192.168.1.70:3000/equlator',
+				type: 'POST',
+				data: JSON.stringify(data),
+				contentType: 'application/json',
+				success: function(data){
+					$('#txtResult').text(data.result);
+				},
+				error: function(data){
+					alert(data);
+				}
+			});
+		});
+	</script>
 </html>
 
 

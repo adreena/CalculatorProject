@@ -33,6 +33,7 @@ router.route('/equlator')
 	  })
 	 .post(function(req,res,next){
 	 	//req.checkBody('equation','equation field is required').notEmpty();
+	  	console.log("got to post");
 	  	var equation = req.body.equation;
 	  	if(typeof equation == 'undefined'){
 	  		next(Error('Please type yout equation'));
