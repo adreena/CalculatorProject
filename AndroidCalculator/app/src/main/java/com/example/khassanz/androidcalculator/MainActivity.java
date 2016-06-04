@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -138,9 +139,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog = new ProgressDialog(MainActivity.this);
-            progressDialog.setMessage("Calculating equation ...");
-            progressDialog.show();
+            //progressDialog = new ProgressDialog(MainActivity.this);
+            //progressDialog.setMessage("Calculating equation ...");
+            //progressDialog.show();
         }
 
         @Override
@@ -165,7 +166,8 @@ public class MainActivity extends AppCompatActivity {
 
         private String postData(String urlPath) throws IOException,JSONException{
 
-            StringBuilder result = new StringBuilder();
+            StringBuilder response = new StringBuilder();
+            String result = "";
             BufferedWriter bufferedWriter = null;
             BufferedReader bufferedReader = null;
             try {
@@ -193,15 +195,20 @@ public class MainActivity extends AppCompatActivity {
                 bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
                 String line;
                 while ((line = bufferedReader.readLine()) != null) {
-                    result.append(line).append("\n");
+                    response.append(line).append("\n");
                 }
+                //extract result from json response
+                JSONObject jsonObject = new JSONObject(response.toString());
+                if(jsonObject!=null)
+                    result = jsonObject.getString("result");
             }finally{
                 if(bufferedWriter !=null)
                     bufferedWriter.close();
                 if(bufferedReader != null)
                     bufferedReader.close();
             }
-            return result.toString();
+
+            return result;
         }
 
     }
