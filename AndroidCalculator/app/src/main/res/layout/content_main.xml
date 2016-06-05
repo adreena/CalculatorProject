@@ -52,17 +52,39 @@
             android:layout_marginRight="0dp"/>
     </ScrollView>
     <Button
-        android:layout_width="208dp"
+        android:layout_width="104dp"
         android:layout_height="40dp"
-        android:text="M"
-        android:id="@+id/btnMemory"
+        android:text="MS"
+        android:id="@+id/btnSaveMemory"
         android:textColor="#ffffff"
         android:textSize="30sp"
         android:background="@drawable/btn_operator_style"
-        android:onClick="onClickMemory"
+        android:onClick="onClickSaveMemory"
         android:layout_below="@+id/scroller"/>
     <Button
-        android:layout_width="208dp"
+        android:layout_width="104dp"
+        android:layout_height="40dp"
+        android:text="MR"
+        android:id="@+id/btnReadMemory"
+        android:textColor="#ffffff"
+        android:textSize="30sp"
+        android:background="@drawable/btn_operator_style"
+        android:onClick="onClickReadMemory"
+        android:layout_toRightOf="@+id/btnSaveMemory"
+        android:layout_below="@+id/scroller"/>
+    <Button
+        android:layout_width="104dp"
+        android:layout_height="40dp"
+        android:text="MC"
+        android:id="@+id/btnClearMemory"
+        android:textColor="#ffffff"
+        android:textSize="30sp"
+        android:background="@drawable/btn_operator_style"
+        android:onClick="onClickClearMemory"
+        android:layout_toRightOf="@+id/btnReadMemory"
+        android:layout_below="@+id/scroller"/>
+    <Button
+        android:layout_width="104dp"
         android:layout_height="40dp"
         android:text="C"
         android:id="@+id/btnClear"
@@ -71,13 +93,13 @@
         android:background="@drawable/btn_operator_style"
         android:onClick="onClickClear"
         android:layout_below="@+id/scroller"
-        android:layout_toRightOf="@+id/btnMemory"/>
+        android:layout_toRightOf="@+id/btnClearMemory"/>
     <Button
         android:layout_width="104dp"
         android:layout_height="70dp"
         android:text="7"
         android:id="@+id/btn7"
-        android:layout_below="@+id/btnMemory"
+        android:layout_below="@+id/btnSaveMemory"
         android:layout_alignLeft="@+id/scroller"
         android:layout_alignStart="@+id/scroller"
         android:textColor="#ffffff"
@@ -94,7 +116,7 @@
         android:textColor="#ffffff"
         android:textSize="30sp"
         android:background="@drawable/btn_style"
-        android:layout_below="@+id/btnMemory"
+        android:layout_below="@+id/btnSaveMemory"
         android:layout_toRightOf="@+id/btn7"
         android:layout_toEndOf="@+id/btn7"
         android:onClick="onClickButton"
@@ -108,7 +130,7 @@
         android:textColor="#ffffff"
         android:textSize="30sp"
         android:background="@drawable/btn_style"
-        android:layout_below="@+id/btnMemory"
+        android:layout_below="@+id/btnSaveMemory"
         android:layout_toRightOf="@+id/btn8"
         android:layout_toEndOf="@+id/btn8"
         android:onClick="onClickButton"
@@ -216,7 +238,7 @@
         android:textColor="#ffffff"
         android:textSize="30sp"
         android:background="@drawable/btn_operator_style"
-        android:layout_below="@+id/btnMemory"
+        android:layout_below="@+id/btnSaveMemory"
         android:layout_toRightOf="@+id/btn9"
         android:layout_toEndOf="@+id/btn9"
         android:onClick="onClickButton"
@@ -313,7 +335,6 @@
         android:textColor="#ffffff"
         android:textSize="30sp"
         android:background= "@drawable/btn_operator_style"
-        android:onClick="onClickEqual"
         android:layout_below="@+id/btnDiv"
         android:layout_toRightOf="@+id/btnBackspace" />
 

@@ -39,8 +39,6 @@ function getCategory(characterCode){
 
 function validate(topPostfix, character, characterCategory,decimalPointExists){
 	var isInvalid = false;
-	console.log("CATGORY: "+characterCategory);
-	console.log(topPostfix);
 	//checking invalid character code
 	if(characterCategory == null )
 		isInvalid = true;
@@ -67,7 +65,6 @@ function validate(topPostfix, character, characterCategory,decimalPointExists){
 			{
 				/*if character is ")" , there should be 1 "(" in paranthesisStack 
 				  otherwise it's invalid */
-				console.log(paranthesisStack);
 				if(paranthesisStack ==null || paranthesisStack.length == 0){
 					isInvalid = true;
 				}
@@ -104,7 +101,6 @@ function convertToPostFix(equation){
 		var topPostfix = getTopOfStack(postfix);
 		var topHelper = getTopOfStack(helperStack);
 
-		console.log("*** validating :"+ character);
 		isInvalid = validate(topPostfix, character, characterCategory, decimalPointExists);
 		if(!isInvalid)
 		{
@@ -121,20 +117,62 @@ function convertToPostFix(equation){
 				}
 				else
 				{
-					if(helperStack != null && helperStack.length>0)
+					/*covering (+ (- */
+
+					if(previousCharacterCategory === CategoryEnum.OPEN_PARANTHESIS)
 					{
-						while(helperStack.length >0 && helperStack[helperStack.length-1].priority >= priority[character])
+						if(equationLength > index+1)
 						{
-							var item = helperStack.pop();
-							postfix.push(item);	
+							var nextCharacterCategory = getCategory(equation.charCodeAt(index+1))
+						    console.log("? "+character);
+							if(character === "+" || character == "-")
+							{
+								//push the next char from equation to postfix and apply - or + to it
+								if(nextCharacterCategory === CategoryEnum.NUMBER)
+								{
+									if(character === "-")
+									{
+										character = character + equation[index+1];
+										var operand = {
+											value : character,
+											priority: priority['number'],
+											isOperator: false
+										}
+										postfix.push(operand);
+										console.log("^^^^^^^.....");
+										console.log(operand);
+										index+=1;
+									}
+								}
+								else
+									isInvalid = true;
+							}
+							else
+							{
+								isInvalid = true;
+							}
+						}
+						else{
+							isInvalid = true;
 						}
 					}
-					var operator = {
-						value : character,
-						priority: priority[character],
-						isOperator: true
+					else
+					{
+						if(helperStack != null && helperStack.length>0)
+						{
+							while(helperStack.length >0 && helperStack[helperStack.length-1].priority >= priority[character])
+							{
+								var item = helperStack.pop();
+								postfix.push(item);	
+							}
+						}
+						var operator = {
+							value : character,
+							priority: priority[character],
+							isOperator: true
+						}
+						helperStack.push(operator);
 					}
-					helperStack.push(operator);
 				}
 			}
 			else if(characterCategory === CategoryEnum.OPEN_PARANTHESIS) /* ( */
@@ -181,6 +219,7 @@ function convertToPostFix(equation){
 				// if top is decimal dont add it ; its invalid
 				// if top is operand add a 0. to top
 				var top = null;
+				var previousCharacterCategory = null;
 				var postfixLength = postfix.length;
 
 				var operand = {
@@ -193,8 +232,23 @@ function convertToPostFix(equation){
 				{
 					top = postfix[postfixLength-1];
 				}
-				
-				if(characterCategory === CategoryEnum.DECIMAL)
+				//if last character is a number or decimal, append current character to top
+				if(characterCategory === CategoryEnum.NUMBER)
+				{
+					if(index > 0)
+					{
+
+						previousCharacterCategory = getCategory(equation.charCodeAt(index-1));
+						if(previousCharacterCategory === CategoryEnum.NUMBER || 
+						   previousCharacterCategory === CategoryEnum.DECIMAL )
+						{
+							operand.value = top.value + character;
+							decimalPointExists = true;
+							postfix.pop();
+						}
+					}
+				}
+				else if(characterCategory === CategoryEnum.DECIMAL)
 				{
 					if(top!=null)
 					{  
@@ -212,6 +266,10 @@ function convertToPostFix(equation){
 								decimalPointExists = true;
 							}
 							postfix.pop();
+						}
+						else
+						{
+							isInvalid=true;
 						}
 					}
 					else
@@ -252,7 +310,6 @@ function convertToPostFix(equation){
 			console.log("---");
 			console.log(postfix);
 			console.log("----");
-			console.log(helperStack);
 		}
 		
 	}
@@ -263,15 +320,12 @@ function convertToPostFix(equation){
 }
 
 function calculatePostfix(postfix){
-	console.log(postfix);
 	var result = [];
 	if(postfix != null && postfix.length > 0)
 	{
 		var len = postfix.length;
 		for(var index=0; index< len ; index++){
 			var token = postfix[index];
-			console.log("token: ");
-			console.log(token);
 			/*
 				if token is operand, push it to stakc
 				else pop 2 operand from stack, apply the operator and push the result
@@ -284,35 +338,47 @@ function calculatePostfix(postfix){
 			{
 				var operand2 = result.pop();
 				var operand1 = result.pop();
-				if(isFinite(operand1) && isFinite(operand2))
+				console.log('operand1: '+typeof operand1 +" "+ operand1);
+				console.log('operand2: '+typeof operand2 +" "+ operand2);
+				if(isFinite(operand2))
 				{
-					var temp = 0;
-					switch(token.value)
-					{
-						case '+':
-							if(typeof operand1 == 'undefined') /* covering +1 */
-								temp = parseInt(operand2);
-							else
-								temp = parseInt(operand1) + parseInt(operand2);
-							break;
-						case '-':
-							if(typeof operand1 == 'undefined') /* covering -1 */
-								temp = -1 * parseInt(operand2);
-							else
-								temp = parseInt(operand1) - parseInt(operand2);
-							break;
-						case '*':
-							temp = parseInt(operand1) * parseInt(operand2);
-							break;
-						case '/':
-
-							temp = parseInt(operand1)/ parseInt(operand2);
-							break;
-						default:
-							break;
+					if(!isFinite(operand1)){
+						console.log("<><>"+isFinite(operand1) +"<>"+ isFinite(operand2));
+						if(token.value === '+')
+							result.push(operand2);
+						else if (token.value === '-')
+							result.push('-'+operand2);
 					}
-					console.log(operand1+ " "+token.value+" "+ operand2 +"="+temp);
-					result.push(temp);
+					else
+					{
+						var temp = 0;
+						switch(token.value)
+						{
+							case '+':
+								if(typeof operand1 === undefined) /* covering +1 */
+									temp = parseInt(operand2);
+								else
+									temp = parseInt(operand1) + parseInt(operand2);
+								break;
+							case '-':
+								if(typeof operand1 === undefined) /* covering -1 */
+									temp = -1 * parseInt(operand2);
+								else
+									temp = parseInt(operand1) - parseInt(operand2);
+								break;
+							case '*':
+								temp = parseInt(operand1) * parseInt(operand2);
+								break;
+							case '/':
+
+								temp = parseInt(operand1)/ parseInt(operand2);
+								break;
+							default:
+								break;
+						}
+						console.log(operand1+ " "+token.value+" "+ operand2 +"="+temp);
+						result.push(temp);
+					}
 				}
 				else{
 					result.push(Infinity)
@@ -339,9 +405,6 @@ module.exports.process = function(equation,callback){
 		var finalResult = calculatePostfix(postfix.result);
 		if(finalResult!=null && finalResult.length>0)
 		{
-			console.log("-");
-			console.log(finalResult);
-			console.log("--");
 			if(isFinite(finalResult[0]))
 		    	callback(null,finalResult[0]);
 		    else
