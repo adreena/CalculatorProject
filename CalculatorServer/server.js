@@ -43,8 +43,11 @@ router.route('/equlator')
 	  		equlator.process(equation, function(err, result){
 	  			if(err)
 	  				res.send({'result': err});
-	  			console.log('passed equaltor');
-	  			res.send({'result': result.result});
+	  			else{
+	  				console.log('passed equaltor');
+	  				console.log(result);
+	  				res.send({'result': result});
+	  			}	
 	  		});
 			
 	  	}
