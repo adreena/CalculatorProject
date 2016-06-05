@@ -8,8 +8,8 @@ function convertToPostFix(equation){
 	var index = 0;
 	var equationLength = equation.length;
 	var decimalPointExists = false;
-
-	while(index < equationLength)
+    var isInvalid = false;
+	while(index < equationLength && !isInvalid)
 	{
 		var character = equation[index];
 		var characterCode = equation.charCodeAt(index);
@@ -121,19 +121,30 @@ function convertToPostFix(equation){
 			console.log("it's operand:");
 			console.log(operand);
 		    postfix.push(operand);
+		    
 
 		}
-
+		else{
+			console.log('else');
+			isInvalid = true;
+			break;
+		}
 		//TODO: skip space or return invalid if there are invalid chcracters
-
-		index+=1;
+	index+=1;
+		
 	}
-	while(tempStack!=null && tempStack.length>0)
+	if(!isInvalid)
+	{
+		while(tempStack!=null && tempStack.length>0)
 		postfix.push(tempStack.pop());
-	console.log("---");
-	console.log(postfix);
-	console.log("----");
-	console.log(tempStack);
+		console.log("---");
+		console.log(postfix);
+		console.log("----");
+		console.log(tempStack);
+	}
+	var result = { result: postfix,
+				   isInvalid: isInvalid};
+				   return result;
 
 }
 
@@ -143,5 +154,9 @@ module.exports.process = function(equation,callback){
     tempStack = [];
 	console.log('started processing ...'+equation);
 	var result = convertToPostFix(equation);
-	callback(null, 'recived');
+	console.log(result);
+	if(result.isInvalid)
+		callback("invalid Entry", []);
+	else
+		callback(null,result.result)
 }
