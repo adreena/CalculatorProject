@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,13 +38,17 @@ public class MainActivity extends AppCompatActivity {
     Button btnClear, btnMemory, btnDecimal, btnEqual;
     Button btnOpenParanthesis, btnCloseParanthesis;
 
-    TextView txtStatus;
-    TextView txtResult;
+    TextView txtResult, txtEquation;
+
+    StringBuilder equation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //initializing empty equation string
+        equation = new StringBuilder();
 
         //wiring view to local variables
         btnAdd = (Button)findViewById(R.id.btnAdd);
@@ -67,36 +72,30 @@ public class MainActivity extends AppCompatActivity {
         btnOpenParanthesis = (Button)findViewById(R.id.btnOpenParanthesis);
         btnCloseParanthesis = (Button)findViewById(R.id.btnCloseParanthesis);
 
-        //txtStatus =(TextView)findViewById(R.id.txtStatus);
         txtResult = (TextView)findViewById(R.id.txtResult);
+        txtEquation = (TextView)findViewById(R.id.txtEquation);
+
+        txtEquation.setMovementMethod(new ScrollingMovementMethod());
 
         btnEqual.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //String status = txtStatus.getText().toString();
 
                 //make Post request
                 new PostDataTask().execute("http://192.168.1.70:3000/equlator");
             }
         });
 
-        //make Get request
+        //make Get request to connect to Equlator Server on port 3000
         new GetDataTask().execute("http://192.168.1.70:3000/");
-
-
     }
 
+    /* Sending GET Request to Connect to Equltor Server */
     class GetDataTask extends AsyncTask<String, Void, String>{
-
-        ProgressDialog progressDialog ;
 
         @Override
         protected void onPreExecute() {
-
             super.onPreExecute();
-            progressDialog = new ProgressDialog(MainActivity.this);
-            progressDialog.setMessage("Loading data ...");
-            progressDialog.show();
         }
 
         @Override
@@ -113,13 +112,9 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
 
-            //set data to textView
-           // txtStatus.setText(result);
+            //display connection status to textView
+           // txtResult.setText(result);
 
-            //cancel progress
-            if(progressDialog != null){
-                progressDialog.dismiss();
-            }
         }
 
         private String GetData(String urlPath) throws IOException{
@@ -155,16 +150,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /* Sending POST Request to Equltor Server and recieve result */
     class PostDataTask extends AsyncTask<String, Void, String>{
-
-        ProgressDialog progressDialog;
-
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            //progressDialog = new ProgressDialog(MainActivity.this);
-            //progressDialog.setMessage("Calculating equation ...");
-            //progressDialog.show();
         }
 
         @Override
@@ -181,10 +171,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-
+            //display result
            // txtResult.setText(result);
-            if(progressDialog != null)
-                progressDialog.dismiss();
         }
 
         private String postData(String urlPath) throws IOException,JSONException{
@@ -234,5 +222,11 @@ public class MainActivity extends AppCompatActivity {
             return result;
         }
 
+    }
+
+    public void onClickButton(View view){
+        Button button = (Button) view;
+        equation.append(button.getText());
+        txtEquation.setText(equation);
     }
 }
