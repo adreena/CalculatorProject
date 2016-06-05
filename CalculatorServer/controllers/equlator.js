@@ -37,7 +37,7 @@ function getCategory(characterCode){
 } 
 
 
-function validate(topPostfix, topHelper, characterCategory,decimalPointExists){
+function validate(topPostfix, character, characterCategory,decimalPointExists){
 	var isInvalid = false;
 	console.log("CATGORY: "+characterCategory);
 	console.log(topPostfix);
@@ -47,8 +47,8 @@ function validate(topPostfix, topHelper, characterCategory,decimalPointExists){
 	else{
 		
 		/*if new characterCode is not a number nor ( nor . */
-		if(topPostfix == null){
-
+		if(topPostfix == null)
+		{
 			if(characterCategory != CategoryEnum.NUMBER && 
 		   	   characterCategory != CategoryEnum.OPEN_PARANTHESIS  &&
 		   	   characterCategory != CategoryEnum.DECIMAL )
@@ -57,17 +57,14 @@ function validate(topPostfix, topHelper, characterCategory,decimalPointExists){
 				  if stack is empty only allow . or numbers or ( to enter
 				  if top is operator, dont allow a new operator or ) to enter
 				 */
-				isInvalid = true;
+				if(character != '+' && character != '-' )
+					isInvalid = true;
 			}
 		}
 		else
 		{
-			/*if(topHelper!=null && topHelper.isOperator && characterCategory != CategoryEnum.NUMBER)
+			if(characterCategory === CategoryEnum.CLOSE_PARANTHESIS)
 			{
-				isInvalid = true;
-			}*/
-			
-			if(characterCategory === CategoryEnum.CLOSE_PARANTHESIS){
 				/*if character is ")" , there should be 1 "(" in paranthesisStack 
 				  otherwise it's invalid */
 				console.log(paranthesisStack);
@@ -77,17 +74,15 @@ function validate(topPostfix, topHelper, characterCategory,decimalPointExists){
 			}
 			/*if character is ")" , there should be 1 "(" in paranthesisStack 
 			  otherwise it's invalid */
-			if(characterCategory === CategoryEnum.DECIMAL && decimalPointExists){
+			if(characterCategory === CategoryEnum.DECIMAL && decimalPointExists)
+			{
 				isInvalid = true;
 			}
 			else if(characterCategory === CategoryEnum.OPERATOR && topPostfix.value === '.')
 			{
 				isInvalid = true;
 			}
-			
 		}
-
-		
 	}
 	return isInvalid;
 
@@ -110,7 +105,7 @@ function convertToPostFix(equation){
 		var topHelper = getTopOfStack(helperStack);
 
 		console.log("*** validating :"+ character);
-		isInvalid = validate(topPostfix, topHelper, characterCategory, decimalPointExists);
+		isInvalid = validate(topPostfix, character, characterCategory, decimalPointExists);
 		if(!isInvalid)
 		{
 			if(characterCategory === CategoryEnum.OPERATOR) /* operators */
@@ -118,23 +113,29 @@ function convertToPostFix(equation){
 				//reset deciaml point
 				decimalPointExists = false;
 
-				if(helperStack != null && helperStack.length>0)
-				{
-					while(helperStack.length >0 && helperStack[helperStack.length-1].priority >= priority[character])
-					{
-						var item = helperStack.pop();
-						postfix.push(item);
-						
-					}
+				//invalid cases of mutiple operators in a row ++ or *+
+				var previousCharacterCategory = getCategory(equation.charCodeAt(index-1));
+				if(previousCharacterCategory === CategoryEnum.OPERATOR)
+				{	
+					isInvalid = true;
 				}
-				var operator = {
+				else
+				{
+					if(helperStack != null && helperStack.length>0)
+					{
+						while(helperStack.length >0 && helperStack[helperStack.length-1].priority >= priority[character])
+						{
+							var item = helperStack.pop();
+							postfix.push(item);	
+						}
+					}
+					var operator = {
 						value : character,
 						priority: priority[character],
 						isOperator: true
 					}
-				//console.log("it's operator:");
-				//console.log(operator);
-				helperStack.push(operator);
+					helperStack.push(operator);
+				}
 			}
 			else if(characterCategory === CategoryEnum.OPEN_PARANTHESIS) /* ( */
 			{
@@ -148,7 +149,8 @@ function convertToPostFix(equation){
 					isOperator: true
 				})
 			}
-			else if(characterCategory === CategoryEnum.CLOSE_PARANTHESIS){
+			else if(characterCategory === CategoryEnum.CLOSE_PARANTHESIS)
+			{
 				//reset deciaml point
 				decimalPointExists = false;
 
@@ -187,19 +189,24 @@ function convertToPostFix(equation){
 					isOperator: false
 				}
 
-				if(postfix!= null && postfixLength > 0){
+				if(postfix!= null && postfixLength > 0)
+				{
 					top = postfix[postfixLength-1];
 				}
 				
-				if(characterCategory === CategoryEnum.DECIMAL){
+				if(characterCategory === CategoryEnum.DECIMAL)
+				{
 					if(top!=null)
 					{  
-						if(!decimalPointExists){
-							if(top.isOperator){
+						if(!decimalPointExists)
+						{
+							if(top.isOperator)
+							{
 								operand.value = '0.';
 								decimalPointExists = true;
 							}
-							else{
+							else
+							{
 
 								operand.value = top.value +'.';
 								decimalPointExists = true;
@@ -207,45 +214,47 @@ function convertToPostFix(equation){
 							postfix.pop();
 						}
 					}
-					else{
-
-						//console.log("*2");
+					else
+					{
 						if(!decimalPointExists){
 							operand.value = '0.';
 							decimalPointExists = true;
 						}
 					}
 				}
-				else if(decimalPointExists){
+				else if(decimalPointExists)
+				{
 					operand.value = top.value + character;
 					decimalPointExists = true;
 					postfix.pop();
 				}
 				
-				
-				//console.log("it's a number:");
-				//console.log(operand);
 			    postfix.push(operand);
-			    
-
 			}
 			index+=1;
 		}
-		else{
+		else
+		{
 			break;
 		}
-		//TODO: skip space or return invalid if there are invalid chcracters
-	
-		
 	}
 	if(!isInvalid)
 	{
-		while(helperStack!=null && helperStack.length>0)
-			postfix.push(helperStack.pop());
-		console.log("---");
-		console.log(postfix);
-		console.log("----");
-		console.log(helperStack);
+		/*invalid: 2 + ((2 +3) */
+		if(paranthesisStack	!= null && paranthesisStack.length > 0)
+		{	
+			isInvalid = true;
+		}
+		else
+		{
+			while(helperStack!=null && helperStack.length>0)
+				postfix.push(helperStack.pop());
+			console.log("---");
+			console.log(postfix);
+			console.log("----");
+			console.log(helperStack);
+		}
+		
 	}
 	var result = { result: postfix,
 				   isInvalid: isInvalid};
@@ -267,19 +276,28 @@ function calculatePostfix(postfix){
 				if token is operand, push it to stakc
 				else pop 2 operand from stack, apply the operator and push the result
 			*/
-			if(!token.isOperator){
+			if(!token.isOperator)
+			{
 				result.push(token.value);
 			}
-			else{
+			else
+			{
 				var operand2 = result.pop();
 				var operand1 = result.pop();
 				var temp = 0;
-				switch(token.value){
+				switch(token.value)
+				{
 					case '+':
-						temp = parseInt(operand1) + parseInt(operand2);
+						if(typeof operand1 == 'undefined') /* covering +1 */
+							temp = parseInt(operand2);
+						else
+							temp = parseInt(operand1) + parseInt(operand2);
 						break;
 					case '-':
-						temp = parseInt(operand1) - parseInt(operand2);
+						if(typeof operand1 == 'undefined') /* covering -1 */
+							temp = -1 * parseInt(operand2);
+						else
+							temp = parseInt(operand1) - parseInt(operand2);
 						break;
 					case '*':
 						temp = parseInt(operand1) * parseInt(operand2);
