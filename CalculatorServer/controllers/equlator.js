@@ -284,32 +284,39 @@ function calculatePostfix(postfix){
 			{
 				var operand2 = result.pop();
 				var operand1 = result.pop();
-				var temp = 0;
-				switch(token.value)
+				if(isFinite(operand1) && isFinite(operand2))
 				{
-					case '+':
-						if(typeof operand1 == 'undefined') /* covering +1 */
-							temp = parseInt(operand2);
-						else
-							temp = parseInt(operand1) + parseInt(operand2);
-						break;
-					case '-':
-						if(typeof operand1 == 'undefined') /* covering -1 */
-							temp = -1 * parseInt(operand2);
-						else
-							temp = parseInt(operand1) - parseInt(operand2);
-						break;
-					case '*':
-						temp = parseInt(operand1) * parseInt(operand2);
-						break;
-					case '/':
-						temp = parseInt(operand1)/ parseInt(operand2);
-						break;
-					default:
-						break;
+					var temp = 0;
+					switch(token.value)
+					{
+						case '+':
+							if(typeof operand1 == 'undefined') /* covering +1 */
+								temp = parseInt(operand2);
+							else
+								temp = parseInt(operand1) + parseInt(operand2);
+							break;
+						case '-':
+							if(typeof operand1 == 'undefined') /* covering -1 */
+								temp = -1 * parseInt(operand2);
+							else
+								temp = parseInt(operand1) - parseInt(operand2);
+							break;
+						case '*':
+							temp = parseInt(operand1) * parseInt(operand2);
+							break;
+						case '/':
+
+							temp = parseInt(operand1)/ parseInt(operand2);
+							break;
+						default:
+							break;
+					}
+					console.log(operand1+ " "+token.value+" "+ operand2 +"="+temp);
+					result.push(temp);
 				}
-				console.log(operand1+ " "+token.value+" "+ operand2 +"="+temp);
-				result.push(temp);
+				else{
+					result.push(Infinity)
+				}
 			}
 		}
 	}
@@ -331,8 +338,14 @@ module.exports.process = function(equation,callback){
 		console.log("passing it to Calculator");
 		var finalResult = calculatePostfix(postfix.result);
 		if(finalResult!=null && finalResult.length>0)
-		{	console.log(finalResult)
-		    callback(null,finalResult[0]);
+		{
+			console.log("-");
+			console.log(finalResult);
+			console.log("--");
+			if(isFinite(finalResult[0]))
+		    	callback(null,finalResult[0]);
+		    else
+		    	callback(null,'Infinity');
 			
 		}
 		

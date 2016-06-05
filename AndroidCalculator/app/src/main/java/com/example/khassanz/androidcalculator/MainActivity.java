@@ -9,7 +9,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.util.Log;
-
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -26,14 +27,18 @@ import java.net.URL;
 import java.nio.Buffer;
 
 
+
 public class MainActivity extends AppCompatActivity {
 
 
-    Button btnConnect;
-    Button btnEqualte;
+    Button btnAdd, btnSub, btnMul, btnDiv;
+    Button btn1, btn2, btn3, btn4,btn5;
+    Button btn6, btn7, btn8, btn9,btn0;
+    Button btnClear, btnMemory, btnDecimal, btnEqual;
+    Button btnOpenParanthesis, btnCloseParanthesis;
+
     TextView txtStatus;
     TextView txtResult;
-    EditText txtEquation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,13 +46,31 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //wiring view to local variables
-        btnConnect = (Button)findViewById(R.id.buttonConnect);
-        btnEqualte = (Button)findViewById(R.id.buttonEqulate);
-        txtStatus =(TextView)findViewById(R.id.txtViewStatus);
-        txtResult = (TextView)findViewById(R.id.txtViewResult);
-        txtEquation = (EditText)findViewById(R.id.editTextEquation);
+        btnAdd = (Button)findViewById(R.id.btnAdd);
+        btnSub = (Button)findViewById(R.id.btnSub);
+        btnMul = (Button)findViewById(R.id.btnMul);
+        btnDiv = (Button)findViewById(R.id.btnDiv);
+        btn0 = (Button)findViewById(R.id.btn0);
+        btn1 = (Button)findViewById(R.id.btn1);
+        btn2 = (Button)findViewById(R.id.btn2);
+        btn3 = (Button)findViewById(R.id.btn3);
+        btn4 = (Button)findViewById(R.id.btn4);
+        btn5 = (Button)findViewById(R.id.btn5);
+        btn6 = (Button)findViewById(R.id.btn6);
+        btn7 = (Button)findViewById(R.id.btn7);
+        btn8 = (Button)findViewById(R.id.btn8);
+        btn9 = (Button)findViewById(R.id.btn9);
+        btnDecimal = (Button)findViewById(R.id.btnDecimal);
+        btnMemory = (Button)findViewById(R.id.btnMemory);
+        btnClear = (Button)findViewById(R.id.btnClear);
+        btnEqual = (Button)findViewById(R.id.btnEqual);
+        btnOpenParanthesis = (Button)findViewById(R.id.btnOpenParanthesis);
+        btnCloseParanthesis = (Button)findViewById(R.id.btnCloseParanthesis);
 
-        btnEqualte.setOnClickListener(new View.OnClickListener() {
+        //txtStatus =(TextView)findViewById(R.id.txtStatus);
+        txtResult = (TextView)findViewById(R.id.txtResult);
+
+        btnEqual.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //String status = txtStatus.getText().toString();
@@ -91,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(result);
 
             //set data to textView
-            txtStatus.setText(result);
+           // txtStatus.setText(result);
 
             //cancel progress
             if(progressDialog != null){
@@ -159,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
 
-            txtResult.setText(result);
+           // txtResult.setText(result);
             if(progressDialog != null)
                 progressDialog.dismiss();
         }
@@ -173,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 //send equation
                 JSONObject dataToSend = new JSONObject();
-                dataToSend.put("equation", txtEquation.getText().toString());
+                dataToSend.put("equation", txtResult.getText().toString());
 
                 //Initialze and config request, connect to server
                 URL url = new URL(urlPath);
