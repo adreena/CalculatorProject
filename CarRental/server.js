@@ -1,4 +1,5 @@
 var express = require('express');
+var path = require('path');
 var port = 5000;
 var engines = require('consolidate');
 var bodyParser = require('body-parser');
@@ -13,6 +14,7 @@ var app = express();
 //bodyParser middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
 
 //setting up template engine
 app.engine('html', engines.nunjucks);

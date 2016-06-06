@@ -13,6 +13,7 @@
     "consolidate": "^0.14.1",
     "express": "^4.13.4",
     "nunjucks": "^2.4.2",
+    "path": "^0.12.7",
     "request": "^2.72.0"
   }
 }

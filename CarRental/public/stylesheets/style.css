@@ -1,0 +1,29 @@
+@import url('//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css');
+
+.date-form { margin: 10px; }
+label.control-label span { 
+	cursor: pointer; 
+}
+
+.intro {
+	background:rgba(255,255,255,0.5);
+}
+.form-group{
+	margin-top: 10px;
+    margin-right: 10px;
+    margin-left: 10px;
+    padding: 5px;
+ }
+
+ .padding-style{
+ 	padding-top: 10px;
+    padding-bottom: 0px;
+    padding-right: 10px;
+    padding-left: 0px;
+ }
+
+ .btn-style{
+ 	margin-top: 10px;
+    margin-right: 10px;
+    margin-left: 15px;
+ }
