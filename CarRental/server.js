@@ -39,8 +39,8 @@ app.get('/checkout',function(req, res){
 app.post('/estimate', function(req,res){
 
 	var numberOfDays = '0';
-	var CARTYPES = { "Economy": 20 , "Intermediate": 30 ,  "Premium": 40 };
-	var EXTRAs = {"Collision": 7, "Insurance": 40, "GPS": 25};
+	var CARTYPES = { "Economy": 34.99 , "Intermediate": 36.99 ,  "Premium": 40.99 };
+	var EXTRAs = {"Collision": 6.99 , "Insurance": 40.50, "GPS": 24.99};
 
 	var carType='';
 	var carPrice = '0';
@@ -48,7 +48,7 @@ app.post('/estimate', function(req,res){
 	var collisionDamage = '0';
 	var gps = '0';
 	var promotionDefault = '5/100';
-	var tax = "6.96";
+	var tax = "8/100";
 
 	//reading form
 	carPrice = CARTYPES[req.body.carType];
@@ -74,9 +74,9 @@ app.post('/estimate', function(req,res){
     numberOfDays = (toDate - fromDate) / 86400000;
 
 	//building equation
-	var totalWithoutPromotion = numberOfDays+'*('+carPrice+'+'+insurance+'+'+collisionDamage+'+'+gps+'+'+ tax +')';
-	var equation = totalWithoutPromotion +'-('+totalWithoutPromotion + '*'+ promotionDefault+')'; 
-
+	var totalWithoutPromotion = numberOfDays+'*('+carPrice+'+'+insurance+'+'+collisionDamage+'+'+gps+')';
+	var beforeTax = totalWithoutPromotion +'-('+totalWithoutPromotion + '*'+ promotionDefault+')'; 
+	var equation = beforeTax +'+('+ beforeTax +')*'+ tax;
 	console.log(equation);
 
 	r({
@@ -92,8 +92,7 @@ app.post('/estimate', function(req,res){
 			console.log(err);
 		}
 		else{
-			console.log(body);
-			res.render('checkout', {total: body.result,
+			res.render('checkout', {total: parseFloat(body.result).toFixed(2), /*trimming to .00 decimal*/
 									carType: req.body.carType,
 									fromDate: req.body.fromDate,
 									toDate: req.body.toDate,

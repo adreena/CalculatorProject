@@ -1,3 +1,5 @@
+//bignumber library
+var BigNumber = require('bignumber.js');
 
 var priority =  { '(':0, ')':1, '+' : 2, '-': 2, '/':3, '*':3, 'number':4};
 
@@ -73,10 +75,13 @@ function validate(topPostfix, character, characterCategory,decimalPointExists){
 			  otherwise it's invalid */
 			if(characterCategory === CategoryEnum.DECIMAL && decimalPointExists)
 			{
+				console.log("1 - validate");
+				console.log(topPostfix);
 				isInvalid = true;
 			}
 			else if(characterCategory === CategoryEnum.OPERATOR && topPostfix.value === '.')
 			{
+				console.log('1- validate');
 				isInvalid = true;
 			}
 		}
@@ -100,6 +105,7 @@ function convertToPostFix(equation){
 		var characterCategory = getCategory(characterCode);
 		var topPostfix = getTopOfStack(postfix);
 		var topHelper = getTopOfStack(helperStack);
+
 
 		isInvalid = validate(topPostfix, character, characterCategory, decimalPointExists);
 		if(!isInvalid)
@@ -219,7 +225,7 @@ function convertToPostFix(equation){
 				var top = null;
 				var previousCharacterCategory = null;
 				var postfixLength = postfix.length;
-
+				console.log('??<>' + character);
 				var operand = {
 					value : character,
 					priority: priority['number'],
@@ -241,29 +247,37 @@ function convertToPostFix(equation){
 						   previousCharacterCategory === CategoryEnum.DECIMAL )
 						{
 							operand.value = top.value + character;
-							decimalPointExists = true;
+							
+							if(previousCharacterCategory === CategoryEnum.DECIMAL){
+								decimalPointExists = true;
+								console.log("*1"+ operand.value + "," + character);
+							}
 							postfix.pop();
 						}
 					}
 				}
 				else if(characterCategory === CategoryEnum.DECIMAL)
 				{
+					console.log('decimal');
 					if(top!=null)
 					{  
 						if(!decimalPointExists)
 						{
 							
 							var previousCharacterCategory = getCategory(equation.charCodeAt(index-1));
-
+							console.log('previous:');
+							console.log(previousCharacterCategory)
 							if(previousCharacterCategory === CategoryEnum.OPEN_PARANTHESIS ||
 								previousCharacterCategory === CategoryEnum.OPERATOR)
 							{
 								operand.value = '0.';
+								console.log("*2");
 								decimalPointExists = true;
 							}
 							else
 							{
 								operand.value = top.value +'.';
+								console.log("*3");
 								decimalPointExists = true;
 								postfix.pop();
 							}
@@ -278,6 +292,7 @@ function convertToPostFix(equation){
 					{
 						if(!decimalPointExists){
 							operand.value = '0.';
+							console.log("*4");
 							decimalPointExists = true;
 						}
 					}
@@ -285,10 +300,12 @@ function convertToPostFix(equation){
 				else if(decimalPointExists)
 				{
 					operand.value = top.value + character;
+					console.log("*5");
 					decimalPointExists = true;
 					postfix.pop();
 				}
-				
+				console.log('operand');
+				console.log(operand);
 			    postfix.push(operand);
 			}
 			index+=1;
@@ -309,7 +326,7 @@ function convertToPostFix(equation){
 		{
 			while(helperStack!=null && helperStack.length>0)
 				postfix.push(helperStack.pop());
-			console.log("---");
+			console.log("--POSTFIX--");
 			console.log(postfix);
 			console.log("----");
 		}
@@ -348,32 +365,36 @@ function calculatePostfix(postfix){
 							result.push(operand2);
 						else if (token.value === '-')
 						{
-							temp = -1 * parseInt(operand2)
+							temp = BigNumber(operand2).neg();
 							result.push(temp);
 						}
 					}
 					else
 					{
+						/*both finite values */
+						operand1 = new BigNumber(operand1);
+						operand2 = new BigNumber(operand2);
+
 						switch(token.value)
 						{
 							case '+':
-								if(typeof operand1 === undefined) /* covering +1 */
-									temp = parseInt(operand2);
-								else
-									temp = parseInt(operand1) + parseInt(operand2);
+								/*if(typeof operand1 === undefined)
+									temp = BigNumber(operand2);
+								else*/
+								temp = operand1.plus(operand2);
 								break;
 							case '-':
-								if(typeof operand1 === undefined) /* covering -1 */
-									temp = -1 * parseInt(operand2);
-								else
-									temp = parseInt(operand1) - parseInt(operand2);
+								/*if(typeof operand1 === undefined)
+									temp = -1 * BigNumber(operand2).mul(-1);
+								else*/
+								temp = operand1.minus(operand2);
 								break;
 							case '*':
-								temp = parseInt(operand1) * parseInt(operand2);
+								temp = operand1.times(operand2);
 								break;
 							case '/':
 
-								temp = parseInt(operand1)/ parseInt(operand2);
+								temp = operand1.dividedBy(operand2);
 								break;
 							default:
 								break;
@@ -388,7 +409,7 @@ function calculatePostfix(postfix){
 			}
 		}
 	}
-	console.log("------");
+	console.log("---RESULT---");
 	console.log(result);
 	return result;
 }
