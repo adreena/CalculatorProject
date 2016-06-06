@@ -116,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
 
             //display connection status to textView
            // txtResult.setText(result);
-
         }
 
         private String GetData(String urlPath) throws IOException{
