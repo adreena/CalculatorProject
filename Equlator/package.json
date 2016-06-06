@@ -12,6 +12,7 @@
     "body-parser": "^1.15.1",
     "consolidate": "^0.14.1",
     "express": "^4.13.4",
-    "nunjucks": "^2.4.2"
+    "nunjucks": "^2.4.2",
+    "path": "^0.12.7"
   }
 }

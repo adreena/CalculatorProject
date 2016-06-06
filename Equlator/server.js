@@ -3,6 +3,7 @@ var port = 3000;
 var engines = require('consolidate');
 var bodyParser = require('body-parser');
 var equlator = require('./equlatorEngine.js');
+var path = require('path');
 
 
 //express middleware
@@ -23,7 +24,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.engine('html', engines.nunjucks);
 app.set('view engine', 'html');
 app.set('views', __dirname+ '/views');
-
+app.use(express.static(path.join(__dirname, 'public')));
 
 var router = express.Router();
 

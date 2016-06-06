@@ -1,18 +1,75 @@
 <html>
 	<head>
-		<title> Checkout </title>
+		<title> {{name}} </title>
 		<script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
-		<link rel="stylesheet" href="stylesheets/bootstrap.css">
+		<script src="javascripts/bootstrap.js"></script>
+		<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
 
+		<!-- Include Date Range Picker -->
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css"/>
+
+		<link rel="stylesheet" href="stylesheets/bootstrap.css">
+		<link rel="stylesheet" href="stylesheets/style.css">
 	</head>
-	<body>
-		<p> Total is  {{total}}</p>
-		<nav class="navbar navbar-inverse" role="navigation" style="padding-left:130px;">
-		    <ul class="nav navbar-nav">
-		      <li class="active"><a href="/">Home<span class="sr-only">(current)</span></a></li>
-		      <li><a href="/about">About us</a></li>
-		      <li><a href="/contact">Contact us</a></li>
-		    </ul>
-		</nav>
-	</body>
+	<body background="images/submission.jpg">
+	<div class="container">
+        <div class="intro">
+          <h1>Speedy Car Rental Services</h1>
+          <p>
+            Established in 2030!, Speedy Car and Truck Rentals is proud to be operated with more than 300 locations across the country to serve you. We offer easy car and truck rental solutions for all your needs, whether it's to run errands, insurance replacement vehicles, a road trip with the family or truck rentals to move large furniture or move your entire house! Speedy is proud to always offer the best rates and special offers. Customers can also earn and redeem Petro-Points every time they rent a car or rent a truck!
+          </p>
+        </div>
+	    
+		<div class="row">
+		  <div class="col-md-6">
+		  	<div class="panel panel-info">
+		    	<div class="panel-heading">Pricing Summary:</div>
+		    	<div class="panel-body">
+		    		<div class = "form-group well">
+				    	 <p>Your total: {{total}} $</p>
+				    	 <p>Car type: {{carType}} </p>
+				    	 <p>From: {{fromDate}} </p>
+				    	 <p>To: {{toDate}} </p>
+				    	 <p>Taxes and Fees: {{tax}} $</p>
+				     </div>
+			    	 <div class="form-group ">
+					      <label class="control-label " for="fname">
+					       First Name 
+					      </label>
+					      <input class="form-control" id="fname" name="fname" type="text"/>
+					 </div>
+					 <div class="form-group ">
+					      <label class="control-label " for="lname">
+					       Last Name 
+					      </label>
+					      <input class="form-control" id="lname" name="lname" type="text"/>
+					 </div>
+					 <div class="form-group ">
+					      <label class="control-label " for="phone">
+					       Phone Number
+					      </label>
+					      <input class="form-control" id="phone" name="phone" type="text"/>
+					  </div>
+					 <div class="form-group ">
+					      <label class="control-label " for="email">
+					       Email
+					      </label>
+					      <input class="form-control" id="email" name="email" type="text"/>
+					  </div>
+					  <button type="submit" class="btn btn-default btn-style">Submit Reservation</button>
+
+
+					</div>
+				</div>
+		    </div>
+		  </div>
+		</div>
+
+		
+</body>
+
 </html>
+
+
+

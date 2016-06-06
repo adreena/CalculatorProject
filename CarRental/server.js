@@ -37,8 +37,48 @@ app.get('/checkout',function(req, res){
 });
 
 app.post('/estimate', function(req,res){
-	var equation = req.body.equation;
+
+	var numberOfDays = '0';
+	var CARTYPES = { "Economy": 20 , "Intermediate": 30 ,  "Premium": 40 };
+	var EXTRAs = {"Collision": 7, "Insurance": 40, "GPS": 25};
+
+	var carType='';
+	var carPrice = '0';
+	var insurance = '0';
+	var collisionDamage = '0';
+	var gps = '0';
+	var promotionDefault = '5/100';
+	var tax = "6.96";
+
+	//reading form
+	carPrice = CARTYPES[req.body.carType];
+	carType = req.body.carType;
+
+    var collisionTemp = req.body.collisionDamage ? true : false;
+    if(collisionTemp)
+    	collisionDamage = EXTRAs["Collision"];
+
+    var insuranceTemp = req.body.insurance ? true : false;
+    if(insuranceTemp)
+    	insurance = EXTRAs["Insurance"];
+
+    var gpsTemp = req.body.gps ? true : false;
+    if(gpsTemp)
+    	gps = EXTRAs["GPS"];
+
+    //counting the number of days
+    var fromDate = new Date(req.body.fromDate);
+    var toDate = new Date(req.body.toDate);
+    toDate = Date.UTC(toDate.getFullYear(), toDate.getMonth(), toDate.getDate());
+    fromDate = Date.UTC(fromDate.getFullYear(), fromDate.getMonth(), fromDate.getDate());
+    numberOfDays = (toDate - fromDate) / 86400000;
+
+	//building equation
+	var totalWithoutPromotion = numberOfDays+'*('+carPrice+'+'+insurance+'+'+collisionDamage+'+'+gps+'+'+ tax +')';
+	var equation = totalWithoutPromotion +'-('+totalWithoutPromotion + '*'+ promotionDefault+')'; 
+
 	console.log(equation);
+
 	r({
 		url: 'http://192.168.1.70:3000/equlator',
 		method: 'POST',
@@ -53,7 +93,11 @@ app.post('/estimate', function(req,res){
 		}
 		else{
 			console.log(body);
-			res.render('checkout', {total: body.result});
+			res.render('checkout', {total: body.result,
+									carType: req.body.carType,
+									fromDate: req.body.fromDate,
+									toDate: req.body.toDate,
+									tax: tax});
 		}
 	});
 

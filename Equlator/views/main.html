@@ -2,20 +2,50 @@
 	<head>
 		<title> {{name}} </title>
 		<script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>
+		<script src="javascripts/bootstrap.js"></script>
+		<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+
+		<link rel="stylesheet" href="stylesheets/bootstrap.css">
+		<link rel="stylesheet" href="stylesheets/style.css">
 	</head>
 	<body>
-		<h1> hello, I am Equlator </h1>
-		
-			<p> what is you equation? </p>
-			<p>
-				<input type="text" name="equation" 
+    <div class="site-wrapper">
+
+      <div class="site-wrapper-inner">
+
+        <div class="cover-container">
+          <div class="inner cover">
+            <h1 class="cover-heading">Hello, I am Equlator</h1>
+            <p class="lead">what is you equation? </p>
+            <p class="lead">
+               <p>
+				 <textarea name="equation" 
 					id = "txtEquation"
-						placeholder="equation..."> </input>
-			</p>
-			<input type="button" value="Equlate" id="btnEqualate"/>
-		<p id="txtResult"/>
-	</body>
+					placeholder="equation...">
+					</textarea> 
+			   </p>
+			   <p>
+			   	<input type="button" class="btn btn-lg btn-default" value="Equlate" id="btnEqualate"/>
+			   </p> 
+
+			   <p id="txtResult"/>
+            </p>
+          </div>
+
+          <div class="mastfoot">
+            <div class="inner">
+              <p>Equlator Engine</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </body>
 	<script type="text/javascript">
+	$(document).ready(function(){
+		$('#txtEquation').val('');
+	});
 		$('#btnEqualate').click(function(){
 			
 			//data to send to server
@@ -29,7 +59,7 @@
 				data: JSON.stringify(data),
 				contentType: 'application/json',
 				success: function(data){
-					$('#txtResult').text(data.result);
+					$('#txtResult').text('Result: '+data.result);
 				},
 				error: function(data){
 					alert(data);
