@@ -60,6 +60,7 @@ function validate(topPostfix, character, characterCategory,decimalPointExists){
 				if(character != '+' && character != '-' )
 					isInvalid = true;
 			}
+			console.log('5*')
 		}
 		else
 		{
@@ -75,15 +76,15 @@ function validate(topPostfix, character, characterCategory,decimalPointExists){
 			  otherwise it's invalid */
 			if(characterCategory === CategoryEnum.DECIMAL && decimalPointExists)
 			{
-				console.log("1 - validate");
-				console.log(topPostfix);
+				console.log("1*");
 				isInvalid = true;
 			}
 			else if(characterCategory === CategoryEnum.OPERATOR && topPostfix.value === '.')
 			{
-				console.log('1- validate');
+				console.log('2*');
 				isInvalid = true;
 			}
+			console.log('4*' + isInvalid);
 		}
 	}
 	return isInvalid;
@@ -105,7 +106,7 @@ function convertToPostFix(equation){
 		var characterCategory = getCategory(characterCode);
 		var topPostfix = getTopOfStack(postfix);
 		var topHelper = getTopOfStack(helperStack);
-
+		console.log(character);
 
 		isInvalid = validate(topPostfix, character, characterCategory, decimalPointExists);
 		if(!isInvalid)
@@ -124,7 +125,6 @@ function convertToPostFix(equation){
 				else
 				{
 					/*covering (+ (- */
-
 					if(previousCharacterCategory === CategoryEnum.OPEN_PARANTHESIS)
 					{
 						if(equationLength > index+1)
@@ -132,12 +132,15 @@ function convertToPostFix(equation){
 							var nextCharacterCategory = getCategory(equation.charCodeAt(index+1))
 							if(character === "+" || character == "-")
 							{
+								console.log("*7");
 								//push the next char from equation to postfix and apply - or + to it
-								if(nextCharacterCategory === CategoryEnum.NUMBER)
+								if(nextCharacterCategory === CategoryEnum.NUMBER || nextCharacterCategory === CategoryEnum.DECIMAL)
 								{
 									if(character === "-")
 									{
 										character = character + equation[index+1];
+										if(character === '.')
+											character = '0.';
 										var operand = {
 											value : character,
 											priority: priority['number'],
@@ -250,7 +253,6 @@ function convertToPostFix(equation){
 							
 							if(previousCharacterCategory === CategoryEnum.DECIMAL){
 								decimalPointExists = true;
-								console.log("*1"+ operand.value + "," + character);
 							}
 							postfix.pop();
 						}
@@ -271,13 +273,11 @@ function convertToPostFix(equation){
 								previousCharacterCategory === CategoryEnum.OPERATOR)
 							{
 								operand.value = '0.';
-								console.log("*2");
 								decimalPointExists = true;
 							}
 							else
 							{
 								operand.value = top.value +'.';
-								console.log("*3");
 								decimalPointExists = true;
 								postfix.pop();
 							}
@@ -285,6 +285,7 @@ function convertToPostFix(equation){
 						}
 						else
 						{
+							console.log('3*')
 							isInvalid=true;
 						}
 					}
@@ -292,7 +293,6 @@ function convertToPostFix(equation){
 					{
 						if(!decimalPointExists){
 							operand.value = '0.';
-							console.log("*4");
 							decimalPointExists = true;
 						}
 					}
@@ -300,7 +300,6 @@ function convertToPostFix(equation){
 				else if(decimalPointExists)
 				{
 					operand.value = top.value + character;
-					console.log("*5");
 					decimalPointExists = true;
 					postfix.pop();
 				}
@@ -365,7 +364,7 @@ function calculatePostfix(postfix){
 							result.push(operand2);
 						else if (token.value === '-')
 						{
-							temp = BigNumber(operand2).neg();
+							temp = (new BigNumber(operand2)).neg();
 							result.push(temp);
 						}
 					}

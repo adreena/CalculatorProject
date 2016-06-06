@@ -96,7 +96,7 @@ app.post('/estimate', function(req,res){
 									carType: req.body.carType,
 									fromDate: req.body.fromDate,
 									toDate: req.body.toDate,
-									tax: tax});
+									tax: '8%'});
 		}
 	});
 
