@@ -318,7 +318,7 @@
     <Button
         android:layout_width="104dp"
         android:layout_height="70dp"
-        android:text="B"
+        android:text="@string/backSpace"
         android:id="@+id/btnBackspace"
         android:textColor="#ffffff"
         android:textSize="30sp"
