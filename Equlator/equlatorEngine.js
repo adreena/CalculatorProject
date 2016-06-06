@@ -3,9 +3,9 @@ var BigNumber = require('bignumber.js');
 
 var priority =  { '(':0, ')':1, '+' : 2, '-': 2, '/':3, '*':3, 'number':4};
 
-var paranthesisStack =[];
+var parenthesisStack =[];
 var CategoryEnum = {OPERATOR: 0 , NUMBER:1, DECIMAL:2 , 
-					OPEN_PARANTHESIS: 3, CLOSE_PARANTHESIS:4};
+					OPEN_PARENTHESIS: 3, CLOSE_PARENTHESIS:4};
 
 function getTopOfStack(stack){
 	var top = null;
@@ -14,31 +14,36 @@ function getTopOfStack(stack){
     return top;
 }
 
+/* Finds the category of character  based on its Ascii code */
 function getCategory(characterCode){
 	
 	var category = null;
 
+	/* Ascii codes for + - * / */
 	if(characterCode === 42 || characterCode === 43  || 
 		characterCode === 45 || characterCode === 47 ){
 		category = CategoryEnum.OPERATOR;
 	}
+	/* Ascii codes for 0 to 9 */
 	else if(characterCode >= 48 && characterCode <= 57){
 		category = CategoryEnum.NUMBER;
 	}
+	/* Ascii code for . decimal */
 	else if(characterCode === 46){
 		category = CategoryEnum.DECIMAL;
 	}
+	/* Ascii codes for ( */
 	else if(characterCode === 40){
-		category = CategoryEnum.OPEN_PARANTHESIS;
+		category = CategoryEnum.OPEN_PARENTHESIS;
 	}
+	/* Ascii codes for ) */
 	else if(characterCode === 41){
-		category = CategoryEnum.CLOSE_PARANTHESIS;
+		category = CategoryEnum.CLOSE_PARENTHESIS;
 	}
-
 	return category;
 } 
 
-
+/*validate character */
 function validate(topPostfix, character, characterCategory,decimalPointExists){
 	var isInvalid = false;
 	//checking invalid character code
@@ -50,7 +55,7 @@ function validate(topPostfix, character, characterCategory,decimalPointExists){
 		if(topPostfix == null)
 		{
 			if(characterCategory != CategoryEnum.NUMBER && 
-		   	   characterCategory != CategoryEnum.OPEN_PARANTHESIS  &&
+		   	   characterCategory != CategoryEnum.OPEN_PARENTHESIS  &&
 		   	   characterCategory != CategoryEnum.DECIMAL )
 			{ 
 				/*
@@ -60,38 +65,34 @@ function validate(topPostfix, character, characterCategory,decimalPointExists){
 				if(character != '+' && character != '-' )
 					isInvalid = true;
 			}
-			console.log('5*')
 		}
 		else
 		{
-			if(characterCategory === CategoryEnum.CLOSE_PARANTHESIS)
+			if(characterCategory === CategoryEnum.CLOSE_PARENTHESIS)
 			{
-				/*if character is ")" , there should be 1 "(" in paranthesisStack 
+				/*if character is ")" , there should be 1 "(" in parenthesisStack 
 				  otherwise it's invalid */
-				if(paranthesisStack ==null || paranthesisStack.length == 0){
+				if(parenthesisStack ==null || parenthesisStack.length == 0){
 					isInvalid = true;
 				}
 			}
-			/*if character is ")" , there should be 1 "(" in paranthesisStack 
+			/*if character is ")" , there should be 1 "(" in parenthesisStack 
 			  otherwise it's invalid */
 			if(characterCategory === CategoryEnum.DECIMAL && decimalPointExists)
 			{
-				console.log("1*");
 				isInvalid = true;
 			}
 			else if(characterCategory === CategoryEnum.OPERATOR && topPostfix.value === '.')
 			{
-				console.log('2*');
 				isInvalid = true;
 			}
-			console.log('4*' + isInvalid);
 		}
 	}
 	return isInvalid;
 
 }
 
-function convertToPostFix(equation){
+function convertToPostfix(equation){
 	var index = 0;
 	var equationLength = equation.length;
 	var decimalPointExists = false;
@@ -106,12 +107,12 @@ function convertToPostFix(equation){
 		var characterCategory = getCategory(characterCode);
 		var topPostfix = getTopOfStack(postfix);
 		var topHelper = getTopOfStack(helperStack);
-		console.log(character);
-
 		isInvalid = validate(topPostfix, character, characterCategory, decimalPointExists);
 		if(!isInvalid)
 		{
-			if(characterCategory === CategoryEnum.OPERATOR) /* operators */
+
+			/* operators + - / * */
+			if(characterCategory === CategoryEnum.OPERATOR) 
 			{
 				//reset deciaml point
 				decimalPointExists = false;
@@ -125,14 +126,13 @@ function convertToPostFix(equation){
 				else
 				{
 					/*covering (+ (- */
-					if(previousCharacterCategory === CategoryEnum.OPEN_PARANTHESIS)
+					if(previousCharacterCategory === CategoryEnum.OPEN_PARENTHESIS )
 					{
 						if(equationLength > index+1)
 						{
 							var nextCharacterCategory = getCategory(equation.charCodeAt(index+1))
 							if(character === "+" || character == "-")
 							{
-								console.log("*7");
 								//push the next char from equation to postfix and apply - or + to it
 								if(nextCharacterCategory === CategoryEnum.NUMBER || nextCharacterCategory === CategoryEnum.DECIMAL)
 								{
@@ -159,7 +159,8 @@ function convertToPostFix(equation){
 								isInvalid = true;
 							}
 						}
-						else{
+						else
+						{
 							isInvalid = true;
 						}
 					}
@@ -182,11 +183,12 @@ function convertToPostFix(equation){
 					}
 				}
 			}
-			else if(characterCategory === CategoryEnum.OPEN_PARANTHESIS) /* ( */
+			/* push it to helperStack */
+			else if(characterCategory === CategoryEnum.OPEN_PARENTHESIS) /* ( */
 			{
 				//reset deciaml point
 				decimalPointExists = false;
-				paranthesisStack.push('(');
+				parenthesisStack.push('(');
 
 				helperStack.push({
 					value : character,
@@ -194,57 +196,58 @@ function convertToPostFix(equation){
 					isOperator: true
 				})
 			}
-			else if(characterCategory === CategoryEnum.CLOSE_PARANTHESIS)
+			/* pop items from helperStack and push them to postfix array until it reaches a ( */
+			else if(characterCategory === CategoryEnum.CLOSE_PARENTHESIS)
 			{
 				//reset deciaml point
 				decimalPointExists = false;
 
-				var foundOpeningParanthesis = false;
+				var foundOpeningParenthesis  = false;
 
-				while(helperStack.length >0  && !foundOpeningParanthesis)
+				while(helperStack.length >0  && !foundOpeningParenthesis )
 				{
 					var item = helperStack.pop();
 					
 					if(item.value ==='(') /*break the while loop*/
 					{	
-						foundOpeningParanthesis= true;
+						foundOpeningParenthesis = true;
 						/*
-						  paranthesis stack should already be in correct state
+						  parenthesis  stack should already be in correct state
 						  otheriwise validation would fail
 						  */
-						paranthesisStack.pop();
+						parenthesisStack.pop();
 					}
 					else
 						postfix.push(item);
 					
 				}
 			}
+			/* push it to postfix */
 			else if (characterCategory === CategoryEnum.NUMBER ||
 					 characterCategory === CategoryEnum.DECIMAL) /* numbers or decimal point */
 			{
-				//if top of postfix is an operand consume . and  decimaldoesnt exist change its priority to decimal
-				// if top is decimal dont add it ; its invalid
-				// if top is operand add a 0. to top
+				/*if top of postfix is an operand consume . and  decimaldoesnt exist change its priority to decimal
+				 if top is decimal dont add it ; its invalid
+				 if top is operand add a 0. to top */
 				var top = null;
 				var previousCharacterCategory = null;
 				var postfixLength = postfix.length;
-				console.log('??<>' + character);
 				var operand = {
 					value : character,
 					priority: priority['number'],
 					isOperator: false
-				}
+				};
 
+				/* read the top of postfix array */
 				if(postfix!= null && postfixLength > 0)
 				{
 					top = postfix[postfixLength-1];
 				}
-				//if last character is a number or decimal, append current character to top
+				/*if last character is a number or decimal, append current character to top*/
 				if(characterCategory === CategoryEnum.NUMBER)
 				{
 					if(index > 0)
 					{
-
 						previousCharacterCategory = getCategory(equation.charCodeAt(index-1));
 						if(previousCharacterCategory === CategoryEnum.NUMBER || 
 						   previousCharacterCategory === CategoryEnum.DECIMAL )
@@ -258,37 +261,36 @@ function convertToPostFix(equation){
 						}
 					}
 				}
+				/* if it's a decimal point  check its previous character category */
 				else if(characterCategory === CategoryEnum.DECIMAL)
 				{
-					console.log('decimal');
+					/* if there is a number/operator/( before . */
 					if(top!=null)
 					{  
 						if(!decimalPointExists)
 						{
-							
 							var previousCharacterCategory = getCategory(equation.charCodeAt(index-1));
-							console.log('previous:');
-							console.log(previousCharacterCategory)
-							if(previousCharacterCategory === CategoryEnum.OPEN_PARANTHESIS ||
+							if(previousCharacterCategory === CategoryEnum.OPEN_PARENTHESIS ||
 								previousCharacterCategory === CategoryEnum.OPERATOR)
 							{
+								/* if therese is a ( or an operator before . convert it to 0. */
 								operand.value = '0.';
 								decimalPointExists = true;
 							}
 							else
 							{
+								/* if therese is a number before . append . to the end of that number */
 								operand.value = top.value +'.';
 								decimalPointExists = true;
 								postfix.pop();
 							}
-							
 						}
 						else
 						{
-							console.log('3*')
 							isInvalid=true;
 						}
 					}
+					/* if therese is no number/operator/( before . convert it to 0. */
 					else
 					{
 						if(!decimalPointExists){
@@ -303,26 +305,26 @@ function convertToPostFix(equation){
 					decimalPointExists = true;
 					postfix.pop();
 				}
-				console.log('operand');
-				console.log(operand);
 			    postfix.push(operand);
 			}
 			index+=1;
 		}
 		else
 		{
+			/* catching invalid cases */
 			break;
 		}
 	}
 	if(!isInvalid)
 	{
 		/*invalid: 2 + ((2 +3) */
-		if(paranthesisStack	!= null && paranthesisStack.length > 0)
+		if(parenthesisStack	!= null && parenthesisStack.length > 0)
 		{	
 			isInvalid = true;
 		}
 		else
 		{
+			/*transfer remaining operators from helperStack to postfix */
 			while(helperStack!=null && helperStack.length>0)
 				postfix.push(helperStack.pop());
 			console.log("--POSTFIX--");
@@ -333,7 +335,6 @@ function convertToPostFix(equation){
 	var result = { result: postfix,
 				   isInvalid: isInvalid};
 	return result;
-
 }
 
 function calculatePostfix(postfix){
@@ -413,11 +414,14 @@ function calculatePostfix(postfix){
 	return result;
 }
 
+/*Process: 
+ 1- converts equation string from Infix to Postfix 
+ 2- passes postfix to calculatePostFix 
+ */
 module.exports.process = function(equation,callback){
-
-    paranthesisStack= [];
+    parenthesisStack= [];
 	console.log('started processing ...'+equation);
-	var postfix = convertToPostFix(equation);
+	var postfix = convertToPostfix(equation);
 
 	if(postfix.isInvalid)
 		callback("invalid Entry", '');

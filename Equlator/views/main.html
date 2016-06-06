@@ -27,8 +27,10 @@
 			   <p>
 			   	<input type="button" class="btn btn-lg btn-default" value="Equlate" id="btnEqualate"/>
 			   </p> 
-
-			   <p id="txtResult"/>
+			   <div id="resultArea">
+			   	<label >Result: </label>
+			   	<p id="txtResult" disabled></p>
+			   </div>
             </p>
           </div>
 
@@ -59,7 +61,8 @@
 				data: JSON.stringify(data),
 				contentType: 'application/json',
 				success: function(data){
-					$('#txtResult').text('Result: '+data.result);
+					console.log(data);
+					$('#txtResult').text(data.result);
 				},
 				error: function(data){
 					alert(data);
